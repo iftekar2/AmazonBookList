@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.amazonbooklist</groupId>
-	<artifactId>amazonbooklist</artifactId>
+	<artifactId>amazonbooklist_spring</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>amazonbooklist</name>
+	<name>amazonbooklist_spring</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
