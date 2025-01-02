@@ -4,6 +4,7 @@ import com.amazonbooklist.amazonbooklist.dao.interfaces.BooksDao;
 import com.amazonbooklist.amazonbooklist.models.Books;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,12 @@ public class BooksController {
     @GetMapping()
     public List<Books> getAllBooks(){
         List<Books> books = booksDao.findAll();
+        return books;
+    }
+
+    @GetMapping("/{isbn}")
+    public List<Books> getBooksByIsbn(@PathVariable Long isbn){
+        List<Books> books = booksDao.findBookById(isbn);
         return books;
     }
 }
