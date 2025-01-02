@@ -28,3 +28,4 @@ public class DbConfiguration {
         basicDataSource.setPassword(password);
     }
 }
+
