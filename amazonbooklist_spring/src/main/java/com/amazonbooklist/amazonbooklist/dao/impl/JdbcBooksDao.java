@@ -128,21 +128,81 @@ public class JdbcBooksDao implements BooksDao {
 
     @Override
     public List<Books> findBooksByAuthor(String author) {
+        List<Books> books = new ArrayList<>();
+        String sql = """
+                SELECT *
+                FROM amazon_books_db.books
+                WHERE author = ?;
+                """;
+
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ){
+            preparedStatement.setString(1, author);
+
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    String title = resultSet.getString("title");
+                    String bookAuthor = resultSet.getString("author");
+                    String publisher = resultSet.getString("publisher");
+                    String language = resultSet.getString("language");
+                    Long isbn = resultSet.getLong("isbn");
+                    Double price = resultSet.getDouble("price");
+                    String amazonUrl = resultSet.getString("amazon_url");
+                    String imageUrl = resultSet.getString("image_url");
+
+                    books.add(new Books(title, bookAuthor, publisher, language, isbn, price, amazonUrl, imageUrl));
+                }
+            }
+        }catch(SQLException e){
+            log.error("Error while trying to Find books by Author name: {}", e.getMessage());
+        }
+        return books;
+    }
+
+    @Override
+    public List<Books> searchBooksByTitle(String titleKeyword) {
+        List<Books> books = new ArrayList<>();
+        String sql = """
+                SELECT *
+                FROM amazon_books_db.books
+                WHERE title LIKE ?;
+                """;
+
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ){
+            preparedStatement.setString(1, "%" + titleKeyword + "%");
+
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    String title = resultSet.getString("title");
+                    String bookAuthor = resultSet.getString("author");
+                    String publisher = resultSet.getString("publisher");
+                    String language = resultSet.getString("language");
+                    Long isbn = resultSet.getLong("isbn");
+                    Double price = resultSet.getDouble("price");
+                    String amazonUrl = resultSet.getString("amazon_url");
+                    String imageUrl = resultSet.getString("image_url");
+
+                    books.add(new Books(title, bookAuthor, publisher, language, isbn, price, amazonUrl, imageUrl));
+                }
+            }
+        }catch(SQLException e){
+            log.error("Error while trying to Find books by Title: {}", e.getMessage());
+        }
+        return books;
+    }
+
+    @Override
+    public List<Books> searchBooksByAuthor(String authorKeyword) {
         return List.of();
     }
 
     @Override
-    public List<Books> searchByBooksByTitle(String titleKeyword) {
-        return List.of();
-    }
-
-    @Override
-    public List<Books> searchByBooksByAuthor(String authorKeyword) {
-        return List.of();
-    }
-
-    @Override
-    public List<Books> searchByPublisher(String publisher) {
+    public List<Books> searchPublisher(String publisher) {
         return List.of();
     }
 }

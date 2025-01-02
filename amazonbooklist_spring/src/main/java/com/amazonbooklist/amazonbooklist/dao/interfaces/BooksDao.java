@@ -12,7 +12,7 @@ public interface BooksDao {
     List<Books> findBooksByAuthor(String author);
 
     //Search operations
-    List<Books> searchByBooksByTitle(String titleKeyword);
-    List<Books> searchByBooksByAuthor(String authorKeyword);
-    List<Books> searchByPublisher(String publisher);
+    List<Books> searchBooksByTitle(String titleKeyword);
+    List<Books> searchBooksByAuthor(String authorKeyword);
+    List<Books> searchPublisher(String publisher);
 }
