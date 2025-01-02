@@ -232,7 +232,50 @@ public class JdbcBooksDao implements BooksDao {
     }
 
     @Override
-    public List<Books> searchPublisher(String publisher) {
-        return List.of();
+    public List<Books> searchPublisher(String publisherKeyword) {
+        List<Books> books = new ArrayList<>();
+        String sql = """
+                SELECT *
+                FROM amazon_books_db.books
+                WHERE publisher LIKE ?;
+                """;
+
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ){
+            preparedStatement.setString(1, "%" + publisherKeyword + "%");
+
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    String title = resultSet.getString("title");
+                    String bookAuthor = resultSet.getString("author");
+                    String publisher = resultSet.getString("publisher");
+                    String language = resultSet.getString("language");
+                    Long isbn = resultSet.getLong("isbn");
+                    Double price = resultSet.getDouble("price");
+                    String amazonUrl = resultSet.getString("amazon_url");
+                    String imageUrl = resultSet.getString("image_url");
+
+                    books.add(new Books(title, bookAuthor, publisher, language, isbn, price, amazonUrl, imageUrl));
+                }
+            }
+        }catch(SQLException e){
+            log.error("Error while trying to Find books by Publisher: {}", e.getMessage());
+        }
+        return books;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -55,4 +55,10 @@ public class BooksController {
         List<Books> books = booksDao.searchBooksByAuthor(authorKeyword);
         return books;
     }
+
+    @GetMapping("search/publisher/{publisherKeyword}")
+    public List<Books> searchBooksByPublisher(@PathVariable String publisherKeyword){
+        List<Books> books = booksDao.searchPublisher(publisherKeyword);
+        return books;
+    }
 }
