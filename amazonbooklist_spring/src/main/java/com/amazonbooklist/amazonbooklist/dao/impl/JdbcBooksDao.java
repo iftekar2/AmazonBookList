@@ -93,7 +93,37 @@ public class JdbcBooksDao implements BooksDao {
 
     @Override
     public List<Books> findBooksByTitle(String title) {
-        return List.of();
+        List<Books> books = new ArrayList<>();
+        String sql = """
+                SELECT *
+                FROM amazon_books_db.books
+                WHERE title = ?;
+                """;
+
+        try(
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        ){
+            preparedStatement.setString(1, title);
+
+            try(ResultSet resultSet = preparedStatement.executeQuery()){
+                while(resultSet.next()){
+                    String bookTitle = resultSet.getString("title");
+                    String author = resultSet.getString("author");
+                    String publisher = resultSet.getString("publisher");
+                    String language = resultSet.getString("language");
+                    Long isbn = resultSet.getLong("isbn");
+                    Double price = resultSet.getDouble("price");
+                    String amazonUrl = resultSet.getString("amazon_url");
+                    String imageUrl = resultSet.getString("image_url");
+
+                    books.add(new Books(bookTitle, author, publisher, language, isbn, price, amazonUrl, imageUrl));
+                }
+            }
+        }catch(SQLException e){
+            log.error("Error while tyring to Find books by Title: {}", e.getMessage());
+        }
+        return books;
     }
 
     @Override
@@ -112,7 +142,7 @@ public class JdbcBooksDao implements BooksDao {
     }
 
     @Override
-    public List<Books> findBooksByPriceRange(int minPrice, int maxPrice) {
+    public List<Books> searchByPublisher(String publisher) {
         return List.of();
     }
 }

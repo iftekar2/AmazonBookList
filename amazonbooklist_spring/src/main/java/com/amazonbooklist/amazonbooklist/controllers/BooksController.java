@@ -26,9 +26,15 @@ public class BooksController {
         return books;
     }
 
-    @GetMapping("/{isbn}")
+    @GetMapping("/isbn/{isbn}")
     public List<Books> getBooksByIsbn(@PathVariable Long isbn){
         List<Books> books = booksDao.findBookById(isbn);
+        return books;
+    }
+
+    @GetMapping("/title/{title}")
+    public List<Books> getBooksByTitle(@PathVariable String title){
+        List<Books> books = booksDao.findBooksByTitle(title);
         return books;
     }
 }
