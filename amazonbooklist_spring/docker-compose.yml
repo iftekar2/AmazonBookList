@@ -2,27 +2,32 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql_db
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     env_file: .env
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=amazon_books_db
-      - MYSQL_USER=${MYSQL_USERNAME}
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1.sql
-      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/2.sql
+      - ./src/main/resources/schema.sql/init.sql:/docker-entrypoint-initdb.d/1.sql
+      - ./src/main/resources/data.sql/books.sql:/docker-entrypoint-initdb.d/2.sql
+
 
   app:
     build: .
     container_name: books_app
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     env_file: .env
     environment:
-      - MYSQL_URL=${MYSQL_URL}
-      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - MYSQL_URL=jdbc:mysql://mysql:3306/amazon_books_db
+      - MYSQL_USERNAME=root
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "8080:8080"
